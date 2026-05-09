@@ -1,0 +1,13 @@
+{
+  "name": "webrtc-demo",
+  "version": "1.0.0",
+  "description": "Simple WebRTC video call demo with signaling",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.17.1"
+  }
+}

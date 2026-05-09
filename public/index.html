@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WebRTC Video Call Demo</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <p class="eyebrow">WebRTC Demo</p>
+        <h1>Video Call</h1>
+        <p class="subtitle">Paste a room ID and join from multiple devices.</p>
+      </header>
+
+      <section class="controls">
+        <label class="field">
+          <span>Room ID</span>
+          <input id="roomId" type="text" placeholder="e.g. demo-123" />
+        </label>
+        <div class="buttons">
+          <button id="joinBtn" class="primary">Join Room</button>
+          <button id="leaveBtn" class="ghost" disabled>Leave</button>
+          <button id="toggleMicBtn" class="ghost" disabled>Mic: On</button>
+          <button id="toggleCamBtn" class="ghost" disabled>Camera: On</button>
+        </div>
+        <p id="status" class="status">Disconnected</p>
+      </section>
+
+      <section class="videos">
+        <div class="video-card">
+          <h2>Local</h2>
+          <video id="localVideo" autoplay playsinline muted></video>
+        </div>
+        <div class="remote-group">
+          <div class="remote-head">
+            <h2>Remote</h2>
+          </div>
+          <div id="remoteGrid" class="remote-grid"></div>
+        </div>
+      </section>
+
+      <section class="log">
+        <h2>Log</h2>
+        <pre id="logOutput"></pre>
+      </section>
+    </main>
+
+    <script src="/js/app.js"></script>
+  </body>
+</html>
