@@ -8,6 +8,11 @@ const logOutput = document.getElementById("logOutput");
 const localVideo = document.getElementById("localVideo");
 const remoteGrid = document.getElementById("remoteGrid");
 
+const shareScreenBtn = document.getElementById("shareScreenBtn");
+
+let screenStream = null;
+let isScreenSharing = false;
+
 let socket;
 let localStream;
 let selfId = null;
@@ -361,3 +366,99 @@ window.addEventListener("beforeunload", () => {
     socket.send(JSON.stringify({ type: "leave" }));
   }
 });
+
+
+async function startScreenShare() {
+  try {
+    screenStream =
+      await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true
+      });
+
+    const screenTrack =
+      screenStream.getVideoTracks()[0];
+
+    // replace video track cho tất cả peer
+    peerConnections.forEach((pc) => {
+
+      const sender = pc
+        .getSenders()
+        .find((s) =>
+          s.track &&
+          s.track.kind === "video"
+        );
+
+      if (sender) {
+        sender.replaceTrack(screenTrack);
+      }
+    });
+
+    // hiện local preview
+    localVideo.srcObject = screenStream;
+
+    isScreenSharing = true;
+
+    shareScreenBtn.textContent = "Stop Sharing";
+
+    // khi user stop share
+    screenTrack.onended = () => {
+      stopScreenShare();
+    };
+
+    log("Started screen sharing");
+
+  } catch (error) {
+    console.error(error);
+    log("Failed to share screen");
+  }
+}
+
+
+async function stopScreenShare() {
+
+  if (!screenStream) return;
+
+  const cameraTrack =
+    localStream.getVideoTracks()[0];
+
+  peerConnections.forEach((pc) => {
+
+    const sender = pc
+      .getSenders()
+      .find((s) =>
+        s.track &&
+        s.track.kind === "video"
+      );
+
+    if (sender) {
+      sender.replaceTrack(cameraTrack);
+    }
+  });
+
+  localVideo.srcObject = localStream;
+
+  screenStream
+    .getTracks()
+    .forEach(track => track.stop());
+
+  screenStream = null;
+
+  isScreenSharing = false;
+
+  shareScreenBtn.textContent = "Share Screen";
+
+  log("Stopped screen sharing");
+}
+
+shareScreenBtn.addEventListener(
+  "click",
+  async () => {
+
+    if (!isScreenSharing) {
+      await startScreenShare();
+    } else {
+      await stopScreenShare();
+    }
+  }
+);
